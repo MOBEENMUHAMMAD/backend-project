@@ -1,0 +1,37 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider          = "postgresql"
+  url               = env("DATABASE_URL")
+  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
+}
+
+model User {
+  id          Int         @id @default(autoincrement())
+  username    String      @unique
+  password    String
+  createdAt   DateTime    @default(now())
+  orders      Order[]
+  updatedAt   DateTime    @updatedAt
+}
+
+model Product {
+  id          Int         @id @default(autoincrement())
+  name        String
+  description String
+  price       Float
+  // Add other fields relevant to your products
+  orders      Order[]
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+}
+
+model Order {
+  id          Int         @id @default(autoincrement())
+  customer    User        @relation(fields: [customerId], references: [id])
+  customerId  Int
+  products    Product[]   // Relationship to products
+  createdAt   DateTime    @default(now())
+}
